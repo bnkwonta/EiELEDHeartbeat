@@ -1,0 +1,124 @@
+# EiELEDHeartbeat
+
+#define COUNTER_LIMIT_MS        (u32)950
+
+
+void UserApp1Initialize(void)
+{
+ 
+     /* All discrete LEDs to off */
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(RED);
+  
+  /* Backlight to white */  
+  LedOn(LCD_RED);
+  LedOn(LCD_GREEN);
+  LedOn(LCD_BLUE);
+  
+  //Heartbeat
+  
+   HEARTBEAT_ON();
+    SystemSleep();
+  HEARTBEAT_OFF();
+
+    UserApp1_StateMachine = UserApp1SM_Idle;
+
+    
+  }
+  
+  static void UserApp1SM_Idle(void)
+{
+  
+LedPWM(RED, LED_PWM_10);
+LedPWM(ORANGE, LED_PWM_10);
+LedPWM(YELLOW, LED_PWM_10);
+LedPWM(GREEN, LED_PWM_10);
+LedPWM(CYAN, LED_PWM_10);
+LedPWM(BLUE, LED_PWM_10);
+LedPWM(PURPLE, LED_PWM_10);
+LedPWM(WHITE, LED_PWM_10);
+
+  static u16 u16BlinkCount = 0;
+ static u8 u8Counter = 0;
+
+
+
+  u16BlinkCount++;
+  if(u16BlinkCount == 950)
+  {
+    u16BlinkCount = 0;
+      /* Update the counter and roll at 16 */
+    u8Counter++;
+    if(u8Counter == 256)
+    {
+      u8Counter = 0;
+    }
+}
+/* Parse the current count to set the LEDs.  
+      RED is bit 0, ORANGE is bit 1, 
+      YELLOW is bit 2, GREEN is bit 3. */
+
+
+
+ if(u16BlinkCount == 200)
+ {
+ LedToggle(RED);
+ }
+  if(u16BlinkCount == 300)
+ {
+ LedToggle(ORANGE);
+ }
+  if(u16BlinkCount == 400)
+ {
+ LedToggle(YELLOW);
+ }
+  if(u16BlinkCount == 500)
+ {
+ LedToggle(GREEN);
+ }
+  if(u16BlinkCount == 600)
+ {
+ LedToggle(CYAN);
+ }
+  if(u16BlinkCount == 700)
+ {
+ LedToggle(BLUE);
+ }
+  if(u16BlinkCount == 800)
+ {
+ LedToggle(PURPLE);
+ }
+  if(u16BlinkCount == 900)
+ {
+ LedToggle(WHITE);
+ }
+
+  static u32 u32Counter = 0;
+  static bool bLightIsOn = FALSE;
+  
+  /* Increment u32Counter every 1ms cycle */
+  u32Counter++;
+  
+  /* Check and roll over */
+  if(u32Counter == COUNTER_LIMIT_MS)
+  {
+    u32Counter = 0;
+    
+    if(bLightIsOn)
+    {
+      HEARTBEAT_OFF();
+    }
+    else
+    {
+      HEARTBEAT_ON();
+    }
+    bLightIsOn = !bLightIsOn;
+  }
+  
+}
